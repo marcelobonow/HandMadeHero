@@ -1,6 +1,7 @@
 ///58:46 HHD 004
 #include <Windows.h>
-#include <stdint.h>
+#include "types.h"
+#include "main.h"
 
 #define internal static
 
@@ -16,14 +17,14 @@ static int bytesPerPixel = 4;
 internal void RenderGradient(int xOffset, int yOffset)
 {
 	int pitch = bitmapWidth * bytesPerPixel;
-	uint8_t* row = (uint8_t*)bitmapMemory;
+	uint8* row = (uint8*)bitmapMemory;
 	for(int y = 0; y < bitmapHeight; y++)
 	{
-		uint32_t* pixel = (uint32_t*)row;
+		uint32* pixel = (uint32*)row;
 		for(int x = 0; x < bitmapWidth; x++)
 		{
-			uint8_t blue = (x + xOffset);
-			uint8_t green = (y + yOffset);
+			uint8 blue = (x + xOffset);
+			uint8 green = (y + yOffset);
 			*pixel++ = ((green << 8) | blue);
 		}
 		row += pitch;

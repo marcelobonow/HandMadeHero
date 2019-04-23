@@ -24,6 +24,9 @@
   <ItemGroup>
     <None Include="cpp.hint" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\types.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{17896FA4-9608-41B8-BAD3-E58E3D974A8A}</ProjectGuid>

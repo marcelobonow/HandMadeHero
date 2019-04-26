@@ -1,0 +1,10 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define internal
+#define WinMain
+#define CS_HREDRAW
+#define CS_VREDRAW
+#define WS_OVERLAPPEDWINDOW (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX)
+#define CW_USEDEFAULT ((int)0x80000000)
+

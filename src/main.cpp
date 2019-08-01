@@ -1,4 +1,4 @@
-/// HMHD 005 51:00
+/// HMHD 006 09:20
 #include <Windows.h>
 #include <xinput.h>
 #include "types.h"
@@ -40,10 +40,10 @@ Win32WindowDimension Win32GetWindowDimension(HWND window)
 internal void RenderGradient(Win32OffScreenBuffer buffer, int blueOffset, int greenOffset)
 {
 	uint8* row = (uint8*)buffer.memory;
-	for(int y = 0; y < buffer.height; y++)
+	for (int y = 0; y < buffer.height; y++)
 	{
 		uint32* pixel = (uint32*)row;
-		for(int x = 0; x < buffer.width; x++)
+		for (int x = 0; x < buffer.width; x++)
 		{
 			uint8 blue = (x + blueOffset);
 			uint8 green = (y + greenOffset);
@@ -52,9 +52,9 @@ internal void RenderGradient(Win32OffScreenBuffer buffer, int blueOffset, int gr
 		row += buffer.pitch;
 	}
 }
-internal void Win32ResizeDIBSection(Win32OffScreenBuffer * buffer, int width, int height)
+internal void Win32ResizeDIBSection(Win32OffScreenBuffer* buffer, int width, int height)
 {
-	if(buffer->memory)
+	if (buffer->memory)
 		VirtualFree(buffer->memory, 0, MEM_RELEASE);
 
 	buffer->width = width;
@@ -83,48 +83,48 @@ internal void Win32DisplayBufferToWindow(HDC deviceContext, int windowWidth, int
 LRESULT CALLBACK Win32MainWindowsCallback(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT result = 0;
-	switch(message)
+	switch (message)
 	{
-		case WM_SIZE:
-		{
-			//Win32WindowDimension dimension = Win32GetWindowDimension(window);
-			//Win32ResizeDIBSection(&globalBackBuffer, dimension.width, dimension.height);
-			break;
-		}
-		case WM_DESTROY:
-		{
-			running = false;
-			break;
-		}
-		case WM_CLOSE:
-		{
-			running = false;
-			break;
-		}
-		case WM_ACTIVATEAPP:
-		{
-			break;
-		}
-		case WM_PAINT:
-		{
-			PAINTSTRUCT paint;
-			HDC deviceContext = BeginPaint(window, &paint);
-			int x = paint.rcPaint.left;
-			int y = paint.rcPaint.top;
-			int width = paint.rcPaint.right - paint.rcPaint.left;
-			int height = paint.rcPaint.bottom - paint.rcPaint.top;
+	case WM_SIZE:
+	{
+		//Win32WindowDimension dimension = Win32GetWindowDimension(window);
+		//Win32ResizeDIBSection(&globalBackBuffer, dimension.width, dimension.height);
+		break;
+	}
+	case WM_DESTROY:
+	{
+		running = false;
+		break;
+	}
+	case WM_CLOSE:
+	{
+		running = false;
+		break;
+	}
+	case WM_ACTIVATEAPP:
+	{
+		break;
+	}
+	case WM_PAINT:
+	{
+		PAINTSTRUCT paint;
+		HDC deviceContext = BeginPaint(window, &paint);
+		int x = paint.rcPaint.left;
+		int y = paint.rcPaint.top;
+		int width = paint.rcPaint.right - paint.rcPaint.left;
+		int height = paint.rcPaint.bottom - paint.rcPaint.top;
 
-			Win32WindowDimension dimension = Win32GetWindowDimension(window);
+		Win32WindowDimension dimension = Win32GetWindowDimension(window);
 
-			Win32DisplayBufferToWindow(deviceContext, dimension.width, dimension.height, globalBackBuffer, x, y, width, height);
-			EndPaint(window, &paint);
-			break;
-		}
-		default:
-		{
-			result = DefWindowProc(window, message, wParam, lParam);
-			break;
-		}
+		Win32DisplayBufferToWindow(deviceContext, dimension.width, dimension.height, globalBackBuffer, x, y, width, height);
+		EndPaint(window, &paint);
+		break;
+	}
+	default:
+	{
+		result = DefWindowProc(window, message, wParam, lParam);
+		break;
+	}
 	}
 	return result;
 }
@@ -137,28 +137,36 @@ int CALLBACK  WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandL
 	windowClass.lpfnWndProc = Win32MainWindowsCallback;
 	windowClass.hInstance = instance;
 	windowClass.lpszClassName = "BasicEngineWindowClass";
-	if(RegisterClass(&windowClass))
+	if (RegisterClass(&windowClass))
 	{
 		HWND window = CreateWindowEx(0, windowClass.lpszClassName, "Basic Engine",
 			WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, instance, 0);
-		if(window)
+		if (window)
 		{
 			running = 1;
 			uint8 yOffset = 0, xOffset = 0;
 
 			Win32WindowDimension dimension = Win32GetWindowDimension(window);
 			Win32ResizeDIBSection(&globalBackBuffer, 1280, 720);
-			while(running)
+			while (running)
 			{
 				MSG message;
-				while(PeekMessage(&message, 0, 0, 0, PM_REMOVE))
+				while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
 				{
-					if(message.message == WM_QUIT)
+					if (message.message == WM_QUIT)
 					{
 						running = false;
 					}
 					TranslateMessage(&message);
 					DispatchMessage(&message);
+				}
+				for (DWORD controllerIndex = 0; controllerIndex < XUSER_MAX_COUNT; controllerIndex++)
+				{
+					XINPUT_STATE controllerState;
+					if (XInputGetState(controllerIndex, &controllerState) == ERROR_SUCCESS)
+					{
+						///Controller is plugged
+					}
 				}
 				RenderGradient(globalBackBuffer, xOffset, yOffset);
 				Win32WindowDimension dimension = Win32GetWindowDimension(window);
